@@ -1,5 +1,7 @@
 export type SectionId = "presets" | "basics" | "metadata" | "content" | "items" | "behavior" | "layout" | "placement" | "sizing" | "colors" | "border" | "radius" | "shadow" | "typography" | "motion" | "states" | "accessibility";
 
+export type AuthFormRole = "form";
+
 export type AuthFormState = {
   title: string;
   description: string;
@@ -27,7 +29,7 @@ export type AuthFormState = {
   previewState: "default" | "hover" | "focus" | "active" | "open" | "closed" | "selected" | "loading" | "empty" | "error" | "success";
   motion: boolean;
   disabled: boolean;
-  role: "region" | "group" | "status" | "alert" | "dialog" | "menu" | "menubar" | "navigation" | "list" | "tree" | "table" | "tablist" | "form" | "textbox" | "img" | "application";
+  role: AuthFormRole;
   mode: string;
   fieldCount: number;
   showSocialLogin: boolean;
