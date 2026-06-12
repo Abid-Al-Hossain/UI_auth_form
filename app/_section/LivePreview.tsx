@@ -29,7 +29,7 @@ export default function LivePreview({ state }: { state: AuthFormState }) {
   const includePassword = state.fieldCount >= 2;
   const helperId = `${state.id}-helper`;
   const messageId = `${state.id}-message`;
-  const inputStyle: CSSProperties = { width: "100%", border: `1px solid ${isError ? "#ef4444" : state.border}`, borderRadius: Math.max(10, state.radius - 12), background: "rgba(255,255,255,.08)", color: state.foreground, padding: "11px 13px", outline: "none" };
+  const inputStyle: CSSProperties = { width: "100%", border: `1px solid ${isError ? "#ef4444" : state.border}`, borderRadius: Math.max(10, state.radius - 12), background: "rgba(255,255,255,.08)", color: state.foreground, padding: "11px 13px", outline: "none", transition: state.motion ? "border-color 0.2s ease, box-shadow 0.2s ease" : "none" };
 
   return (
     <form id={state.id} aria-label={state.ariaLabel} aria-describedby={`${helperId} ${messageId}`} onSubmit={(event) => event.preventDefault()} style={shell(state)}>
@@ -65,7 +65,7 @@ export default function LivePreview({ state }: { state: AuthFormState }) {
         </label>
       )}
 
-      <button type="submit" disabled={disabled} aria-busy={isLoading} style={{ border: 0, borderRadius: Math.max(12, state.radius - 8), background: state.accent, color: state.background, cursor: disabled ? "not-allowed" : "pointer", fontWeight: 800, padding: "12px 16px" }}>
+      <button type="submit" disabled={disabled} aria-busy={isLoading} style={{ border: 0, borderRadius: Math.max(12, state.radius - 8), background: state.accent, color: state.background, cursor: disabled ? "not-allowed" : "pointer", fontWeight: 800, padding: "12px 16px", transition: state.motion ? "opacity 0.2s ease, background 0.2s ease" : "none" }}>
         {isLoading ? "Submitting..." : state.label}
       </button>
 
