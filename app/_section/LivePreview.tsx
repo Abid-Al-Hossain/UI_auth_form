@@ -2,6 +2,25 @@
 
 import type { CSSProperties } from "react";
 import type { AuthFormState } from "../types";
+import { SYSTEM_FONTS } from "@/components/shared/typography/fontConstants";
+
+function resolveFont(state: { fontBucket: "system" | "google"; googleFontFamily: string; systemFontIdx: number }): string {
+  return state.fontBucket === "google"
+    ? `"${state.googleFontFamily}", sans-serif`
+    : (SYSTEM_FONTS[state.systemFontIdx]?.css ?? "inherit");
+}
+
+function buildShadow(state: { shadowEnabled: boolean; shadowX: number; shadowY: number; shadowBlur: number; shadowSpread: number; shadowColor: string; shadowOpacity: number }): string {
+  if (!state.shadowEnabled) return "none";
+  const hex = Math.round(state.shadowOpacity * 255).toString(16).padStart(2, "0");
+  return `${state.shadowX}px ${state.shadowY}px ${state.shadowBlur}px ${state.shadowSpread}px ${state.shadowColor}${hex}`;
+}
+
+function buildRadius(state: { radiusLinked: boolean; radius: number; radiusTL: number; radiusTR: number; radiusBR: number; radiusBL: number }): string {
+  return state.radiusLinked
+    ? `${state.radius}px`
+    : `${state.radiusTL}px ${state.radiusTR}px ${state.radiusBR}px ${state.radiusBL}px`;
+}
 
 function shell(state: AuthFormState): CSSProperties {
   return {
@@ -10,12 +29,17 @@ function shell(state: AuthFormState): CSSProperties {
     padding: state.padding,
     display: "grid",
     gap: state.gap,
-    borderRadius: state.radius,
-    border: `${state.borderWidth}px solid ${state.border}`,
-    boxShadow: `0 ${Math.round(state.shadow / 3)}px ${state.shadow}px rgba(0,0,0,.28)`,
+    borderRadius: buildRadius(state),
+    border: `${state.borderWidth}px ${state.borderStyle} ${state.border}`,
+    boxShadow: buildShadow(state),
     background: state.background,
     color: state.foreground,
-    fontFamily: state.fontFamily,
+    fontFamily: resolveFont(state),
+    fontStyle: state.fontStyle,
+    textTransform: state.textTransform,
+    textDecoration: state.textDecoration,
+    letterSpacing: `${state.letterSpacing}${state.letterSpacingUnit}`,
+    lineHeight: state.lineHeight,
     opacity: state.disabled ? 0.55 : 1,
   };
 }
@@ -29,7 +53,7 @@ export default function LivePreview({ state }: { state: AuthFormState }) {
   const includePassword = state.fieldCount >= 2;
   const helperId = `${state.id}-helper`;
   const messageId = `${state.id}-message`;
-  const inputStyle: CSSProperties = { width: "100%", border: `1px solid ${isError ? "#ef4444" : state.border}`, borderRadius: Math.max(10, state.radius - 12), background: "rgba(255,255,255,.08)", color: state.foreground, padding: "11px 13px", outline: "none", transition: state.motion ? "border-color 0.2s ease, box-shadow 0.2s ease" : "none" };
+  const inputStyle: CSSProperties = { width: "100%", border: `1px solid ${isError ? "#ef4444" : state.border}`, borderRadius: Math.max(10, state.radius - 12), background: "rgba(255,255,255,.08)", color: state.foreground, padding: "11px 13px", outline: "none", transition: state.transitionDuration > 0 ? "border-color 0.2s ease, box-shadow 0.2s ease" : "none" };
 
   return (
     <form id={state.id} aria-label={state.ariaLabel} aria-describedby={`${helperId} ${messageId}`} onSubmit={(event) => event.preventDefault()} style={shell(state)}>
@@ -65,7 +89,7 @@ export default function LivePreview({ state }: { state: AuthFormState }) {
         </label>
       )}
 
-      <button type="submit" disabled={disabled} aria-busy={isLoading} style={{ border: 0, borderRadius: Math.max(12, state.radius - 8), background: state.accent, color: state.background, cursor: disabled ? "not-allowed" : "pointer", fontWeight: 800, padding: "12px 16px", transition: state.motion ? "opacity 0.2s ease, background 0.2s ease" : "none" }}>
+      <button type="submit" disabled={disabled} aria-busy={isLoading} style={{ border: 0, borderRadius: Math.max(12, state.radius - 8), background: state.accent, color: state.background, cursor: disabled ? "not-allowed" : "pointer", fontWeight: 800, padding: "12px 16px", transition: state.transitionDuration > 0 ? "opacity 0.2s ease, background 0.2s ease" : "none" }}>
         {isLoading ? "Submitting..." : state.label}
       </button>
 
