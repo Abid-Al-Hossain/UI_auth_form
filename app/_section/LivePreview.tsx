@@ -30,9 +30,9 @@ function shell(state: AuthFormState): CSSProperties {
     display: "grid",
     gap: state.gap,
     borderRadius: buildRadius(state),
-    border: `${state.borderWidth}px ${state.borderStyle} ${state.border}`,
+    border: `${state.borderWidth}px ${state.borderStyle} ${state.disabled && state.disabledUseCustomColors ? state.disabledBorder : state.border}`,
     boxShadow: buildShadow(state),
-    background: state.background,
+    background: state.disabled && state.disabledUseCustomColors ? state.disabledBg : state.background,
     color: state.foreground,
     fontFamily: resolveFont(state),
     fontStyle: state.fontStyle,
@@ -40,7 +40,8 @@ function shell(state: AuthFormState): CSSProperties {
     textDecoration: state.textDecoration,
     letterSpacing: `${state.letterSpacing}${state.letterSpacingUnit}`,
     lineHeight: state.lineHeight,
-    opacity: state.disabled ? 0.55 : 1,
+    opacity: state.disabled ? state.disabledOpacity : 1,
+    cursor: state.disabled ? state.disabledCursor : undefined,
   };
 }
 
@@ -53,7 +54,7 @@ export default function LivePreview({ state }: { state: AuthFormState }) {
   const includePassword = state.fieldCount >= 2;
   const helperId = `${state.id}-helper`;
   const messageId = `${state.id}-message`;
-  const inputStyle: CSSProperties = { width: "100%", border: `1px solid ${isError ? "#ef4444" : state.border}`, borderRadius: Math.max(10, state.radius - 12), background: "rgba(255,255,255,.08)", color: state.foreground, padding: "11px 13px", outline: "none", transition: state.transitionDuration > 0 ? "border-color 0.2s ease, box-shadow 0.2s ease" : "none" };
+  const inputStyle: CSSProperties = { width: "100%", border: `1px solid ${isError ? state.errorColor : state.border}`, borderRadius: Math.max(10, state.radius - 12), background: "rgba(255,255,255,.08)", color: state.foreground, padding: "11px 13px", outline: "none", transition: state.transitionDuration > 0 ? "border-color 0.2s ease, box-shadow 0.2s ease" : "none" };
 
   return (
     <form id={state.id} aria-label={state.ariaLabel} aria-describedby={`${helperId} ${messageId}`} onSubmit={(event) => event.preventDefault()} style={shell(state)}>
